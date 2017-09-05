@@ -4,21 +4,25 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+
+    private AppManager appManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Log.d(TAG, "Debug!");
-        Log.w(TAG, "Warning!");
-        Log.v(TAG, "Verbose!");
-        Log.i(TAG, "Info!");
-        Log.e(TAG, "ERROR!");
-        Log.wtf(TAG, "WTF???!");
+        appManager = new AppManager(this);
+
+        List<AppInfo> installedApps = appManager.getInstalledApps();
+        for (AppInfo installedApp : installedApps) {
+            Log.i(TAG, "App: " + installedApp);
+        }
     }
 
 }
