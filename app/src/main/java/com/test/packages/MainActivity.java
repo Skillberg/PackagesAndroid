@@ -2,7 +2,8 @@ package com.test.packages;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import java.util.List;
 
@@ -18,11 +19,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         appManager = new AppManager(this);
-
         List<AppInfo> installedApps = appManager.getInstalledApps();
-        for (AppInfo installedApp : installedApps) {
-            Log.i(TAG, "App: " + installedApp);
-        }
+
+        AppsAdapter appsAdapter = new AppsAdapter();
+
+        RecyclerView recyclerView = findViewById(R.id.apps_rv);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(appsAdapter);
+
+        appsAdapter.setApps(installedApps);
+        appsAdapter.notifyDataSetChanged();
     }
 
 }
