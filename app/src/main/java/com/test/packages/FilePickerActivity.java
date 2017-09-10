@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -35,7 +36,10 @@ public class FilePickerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_file_picker);
 
         RecyclerView recyclerView = findViewById(R.id.files_rv);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layoutManager);
+
+        recyclerView.addItemDecoration(new DividerItemDecoration(this, layoutManager.getOrientation()));
 
         filesAdapter = new FilesAdapter();
         recyclerView.setAdapter(filesAdapter);

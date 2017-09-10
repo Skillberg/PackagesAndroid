@@ -15,6 +15,9 @@ import java.util.List;
  */
 public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> {
 
+    private static final int TYPE_DIRECTORY = 0;
+    private static final int TYPE_FILE = 1;
+
     private List<File> files = new ArrayList<>();
 
     public void setFiles(List<File> files) {
@@ -26,7 +29,13 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
 
-        View view = layoutInflater.inflate(R.layout.view_item_file, parent, false);
+        View view;
+
+        if (viewType == TYPE_DIRECTORY) {
+            view = layoutInflater.inflate(R.layout.view_item_directory, parent, false);
+        } else {
+            view = layoutInflater.inflate(R.layout.view_item_file, parent, false);
+        }
 
         return new ViewHolder(view);
     }
@@ -42,6 +51,17 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
     @Override
     public int getItemCount() {
         return files.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        File file = files.get(position);
+
+        if (file.isDirectory()) {
+            return TYPE_DIRECTORY;
+        } else {
+            return TYPE_FILE;
+        }
     }
 
     /**
