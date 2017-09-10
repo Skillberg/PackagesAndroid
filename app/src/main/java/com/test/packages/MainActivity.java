@@ -1,7 +1,10 @@
 package com.test.packages;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -13,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import java.io.File;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -97,10 +101,33 @@ public class MainActivity extends AppCompatActivity {
             String apkPath = data.getStringExtra(FilePickerActivity.EXTRA_FILE_PATH);
             Log.i(TAG, "APK: " + apkPath);
 
-            
+            startAppInstallation(apkPath);
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+    /**
+     * Сообщаем системе, что хотим установить APK
+     *
+     * @param apkPath Путь до APK-файла
+     */
+    private void startAppInstallation(String apkPath) {
+        Intent installIntent = new Intent(Intent.ACTION_VIEW);
+
+        Uri uri;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            uri = FileProvider.getUriForFile(this,
+                    BuildConfig.APPLICATION_ID + ".provider", new File(apkPath));
+            installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        } else {
+            uri = Uri.fromFile(new File(apkPath));
+        }
+
+        installIntent.setDataAndType(uri, "application/vnd.android.package-archive");
+        installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // Создаст новый процесс
+        startActivity(installIntent);
     }
 
     /**
