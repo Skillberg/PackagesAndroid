@@ -8,7 +8,12 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+
+import java.io.File;
+import java.util.List;
 
 /**
  * Activity для выбора APK-файла
@@ -19,11 +24,21 @@ public class FilePickerActivity extends AppCompatActivity {
 
     private static final int PERMISSION_REQUEST_CODE = 1;
 
+    private FileManager fileManager;
+
+    private FilesAdapter filesAdapter;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_file_picker);
+
+        RecyclerView recyclerView = findViewById(R.id.files_rv);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        filesAdapter = new FilesAdapter();
+        recyclerView.setAdapter(filesAdapter);
 
         initFileManager();
     }
@@ -63,12 +78,24 @@ public class FilePickerActivity extends AppCompatActivity {
     }
 
     /**
+     * Получаем список файлов и передаём в адаптер
+     */
+    private void updateFileList() {
+        List<File> files = fileManager.getFiles();
+        filesAdapter.setFiles(files);
+
+        filesAdapter.notifyDataSetChanged();
+    }
+
+    /**
      * Инициализируем менеджер файлов, проверяем разрешение
      */
     private void initFileManager() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             // Разрешение предоставлено
+            fileManager = new FileManager(this);
+            updateFileList();
         } else {
             requestPermissions();
         }
