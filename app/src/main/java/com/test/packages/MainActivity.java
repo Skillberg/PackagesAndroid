@@ -1,5 +1,6 @@
 package com.test.packages;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +11,6 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import java.util.List;
 
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.install_item:
-                showToast();
+                startFilePickerActivity();
                 return true;
 
             default:
@@ -87,11 +87,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void showToast() {
-        Toast toast = Toast.makeText(this, "Hello", Toast.LENGTH_LONG);
-        toast.show();
+    /**
+     * Запускаем Activity для выбора файла
+     */
+    private void startFilePickerActivity() {
+        Intent intent = new Intent(this, FilePickerActivity.class);
+        startActivity(intent);
     }
 
+    /**
+     * Перезагружаем список приложений
+     */
     private void reloadApps() {
         List<AppInfo> installedApps = appManager.getInstalledApps();
         appsAdapter.setApps(installedApps);
@@ -100,6 +106,9 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setRefreshing(false);
     }
 
+    /**
+     * Listener для SwipeRefreshLayout
+     */
     private final SwipeRefreshLayout.OnRefreshListener onRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
         @Override
         public void onRefresh() {
