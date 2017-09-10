@@ -1,5 +1,6 @@
 package com.test.packages;
 
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,13 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
 
     private static final int TYPE_DIRECTORY = 0;
     private static final int TYPE_FILE = 1;
+
+    @Nullable
+    private OnFileClickListener onFileClickListener;
+
+    public void setOnFileClickListener(@Nullable OnFileClickListener onFileClickListener) {
+        this.onFileClickListener = onFileClickListener;
+    }
 
     private List<File> files = new ArrayList<>();
 
@@ -45,6 +53,7 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
         File file = files.get(position);
 
         holder.nameTv.setText(file.getName());
+        holder.itemView.setTag(file);
     }
 
 
@@ -75,7 +84,26 @@ public class FilesAdapter extends RecyclerView.Adapter<FilesAdapter.ViewHolder> 
             super(itemView);
 
             nameTv = itemView.findViewById(R.id.name_tv);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    File file = (File) view.getTag();
+
+                    if (onFileClickListener != null) {
+                        onFileClickListener.onFileClick(file);
+                    }
+                }
+            });
         }
 
     }
+
+    /**
+     * Listener кликов на файлы
+     */
+    public interface OnFileClickListener {
+        void onFileClick(File file);
+    }
+
 }

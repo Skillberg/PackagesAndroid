@@ -50,7 +50,7 @@ public class FileManager {
 
         // Проверим, не поднялись ли мы выше rootDirectory
         if (!directory.equals(rootDirectory) &&
-                directory.getAbsolutePath().contains(rootDirectory.getAbsolutePath())) {
+                rootDirectory.getAbsolutePath().contains(directory.getAbsolutePath())) {
             Log.w(TAG, "Trying to navigate upper than root directory to " + directory.getAbsolutePath());
 
             return false;

@@ -47,6 +47,20 @@ public class FilePickerActivity extends AppCompatActivity {
         initFileManager();
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        filesAdapter.setOnFileClickListener(onFileClickListener);
+    }
+
+    @Override
+    protected void onStop() {
+        filesAdapter.setOnFileClickListener(null);
+
+        super.onStop();
+    }
+
     /**
      * Этот метод будет вызван, когда пользователь предоставит разрешения, или откажет в них
      *
@@ -104,4 +118,17 @@ public class FilePickerActivity extends AppCompatActivity {
             requestPermissions();
         }
     }
+
+    /**
+     * Listener события клика на файл
+     */
+    private final FilesAdapter.OnFileClickListener onFileClickListener = new FilesAdapter.OnFileClickListener() {
+        @Override
+        public void onFileClick(File file) {
+            if (file.isDirectory()) {
+                fileManager.navigateTo(file);
+                updateFileList();
+            }
+        }
+    };
 }
