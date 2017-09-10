@@ -1,6 +1,7 @@
 package com.test.packages;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -22,6 +23,8 @@ import java.util.List;
 public class FilePickerActivity extends AppCompatActivity {
 
     private static final String TAG = "FilePickerActivity";
+
+    public static final String EXTRA_FILE_PATH = "file_path";
 
     private static final int PERMISSION_REQUEST_CODE = 1;
 
@@ -59,6 +62,18 @@ public class FilePickerActivity extends AppCompatActivity {
         filesAdapter.setOnFileClickListener(null);
 
         super.onStop();
+    }
+
+    /**
+     * Нажата кнопка "Назад". Пытаемся подняться на директорию выше, если не получается — закрываем Activity
+     */
+    @Override
+    public void onBackPressed() {
+        if (fileManager != null && fileManager.navigateUp()) {
+            updateFileList();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     /**
@@ -128,6 +143,14 @@ public class FilePickerActivity extends AppCompatActivity {
             if (file.isDirectory()) {
                 fileManager.navigateTo(file);
                 updateFileList();
+            } else {
+                if (file.getName().endsWith(".apk")) {
+                    Intent intent = new Intent();
+                    intent.putExtra(EXTRA_FILE_PATH, file.getAbsolutePath());
+                    setResult(RESULT_OK, intent);
+
+                    finish();
+                }
             }
         }
     };

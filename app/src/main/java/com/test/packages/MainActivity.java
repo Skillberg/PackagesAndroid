@@ -8,6 +8,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,6 +18,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
+
+    private static final int REQUEST_CODE_PICK_APK = 1;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -88,12 +91,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_PICK_APK && resultCode == RESULT_OK) {
+            String apkPath = data.getStringExtra(FilePickerActivity.EXTRA_FILE_PATH);
+            Log.i(TAG, "APK: " + apkPath);
+
+            
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
     /**
      * Запускаем Activity для выбора файла
      */
     private void startFilePickerActivity() {
         Intent intent = new Intent(this, FilePickerActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_CODE_PICK_APK);
     }
 
     /**
