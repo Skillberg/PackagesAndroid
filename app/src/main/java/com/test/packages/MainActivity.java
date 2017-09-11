@@ -11,6 +11,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,6 +52,10 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         recyclerView.setAdapter(appsAdapter);
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(itemTouchHelperCallback);
+        recyclerView.addItemDecoration(itemTouchHelper);
+        itemTouchHelper.attachToRecyclerView(recyclerView);
 
         reloadApps();
     }
@@ -107,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
     /**
      * Сообщаем системе, что хотим установить APK
      *
@@ -131,6 +137,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Запускаем удаление приложения
+     */
+    private void startAppUninstallation(AppInfo appInfo) {
+        Intent intent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
+        intent.setData(Uri.parse("package:" + appInfo.getPackageName()));
+        startActivity(intent);
+    }
+
+    /**
      * Запускаем Activity для выбора файла
      */
     private void startFilePickerActivity() {
@@ -149,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setRefreshing(false);
     }
 
+
     /**
      * Listener для SwipeRefreshLayout
      */
@@ -156,6 +172,27 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onRefresh() {
             reloadApps();
+        }
+    };
+
+    /**
+     * Callback для ItemTouchHelper (для реализации Swipe-to-Dismiss)
+     */
+    private final ItemTouchHelper.Callback itemTouchHelperCallback = new ItemTouchHelper.Callback() {
+        @Override
+        public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+            return makeMovementFlags(ItemTouchHelper.ACTION_STATE_IDLE, ItemTouchHelper.END);
+        }
+
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            AppInfo appInfo = (AppInfo) viewHolder.itemView.getTag();
+            startAppUninstallation(appInfo);
         }
     };
 
