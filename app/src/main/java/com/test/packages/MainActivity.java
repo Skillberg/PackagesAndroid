@@ -137,13 +137,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Запускаем удаление приложения, используя Root
+     */
+    private void uninstallWithRoot(AppInfo appInfo) {
+        UninstallAsyncTask uninstallAsyncTask = new UninstallAsyncTask();
+        uninstallAsyncTask.execute(appInfo.getPackageName());
+    }
+
+    /**
      * Запускаем удаление приложения
      */
     private void startAppUninstallation(AppInfo appInfo) {
-        Intent intent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
-        intent.setData(Uri.parse("package:" + appInfo.getPackageName()));
-        startActivity(intent);
+        uninstallWithRoot(appInfo);
+//        Intent intent = new Intent(Intent.ACTION_UNINSTALL_PACKAGE);
+//        intent.setData(Uri.parse("package:" + appInfo.getPackageName()));
+//        startActivity(intent);
     }
+
 
     /**
      * Запускаем Activity для выбора файла
