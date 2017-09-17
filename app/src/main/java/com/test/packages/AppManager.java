@@ -1,9 +1,11 @@
 package com.test.packages;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,7 +31,9 @@ public class AppManager {
                     installedPackage.versionCode, // Код версии
                     installedPackage.versionName, // Имя версии
                     installedPackage.applicationInfo.loadLabel(packageManager).toString(), // Имя приложения
-                    installedPackage.applicationInfo.loadIcon(packageManager) // Иконка приложения
+                    installedPackage.applicationInfo.loadIcon(packageManager), // Иконка приложения
+                    ((installedPackage.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 1), // Системное ли приложение
+                    new File(installedPackage.applicationInfo.sourceDir) // Путь до APK
             );
 
             installedApps.add(appInfo);

@@ -3,6 +3,7 @@ package com.test.packages;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.io.File;
 import java.util.List;
 
 import eu.chainfire.libsuperuser.Shell;
@@ -45,7 +46,31 @@ public class RootHelper {
     public static boolean uninstall(String packageName) {
         String output = executeCommand("pm uninstall " + packageName);
 
-        if (output != null && output.contains("success")) {
+        if (output != null && output.toLowerCase().contains("success")) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Пытаемся удалить системное приложение
+     * Сначала перемонтируем /system в режим записи
+     * Потом удаляем файл
+     * Потом перемонтируем /system обратно в "только для чтения"
+     *
+     * @param appApk Путь до APK файла, который нужно удалить
+     * @return True если удаление прошло успешно, false — в ином случае
+     */
+    public static boolean uninstallSystem(File appApk) {
+        executeCommand("mount -o rw,remount /system");
+        executeCommand("rm " + appApk.getAbsolutePath());
+        executeCommand("mount -o ro,remount /system");
+
+        // Проверяем, удалился ли файл
+        String output = executeCommand("ls /system/app/Camera2/Camera2.apk");// + appApk.getAbsolutePath());
+
+        if (output != null && output.trim().isEmpty()) {
             return true;
         } else {
             return false;
