@@ -1,7 +1,6 @@
 package com.test.packages;
 
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import java.io.File;
 import java.util.List;
@@ -35,6 +34,15 @@ public class RootHelper {
         }
 
         return stringBuilder.toString();
+    }
+
+    /**
+     * Проверяем, доступен ли нам рутовый шелл
+     *
+     * @return True если доступен, false — если не доступен
+     */
+    public static boolean isRootAvailable() {
+        return Shell.SU.available();
     }
 
     /**
@@ -76,5 +84,6 @@ public class RootHelper {
             return false;
         }
     }
+
 
 }
